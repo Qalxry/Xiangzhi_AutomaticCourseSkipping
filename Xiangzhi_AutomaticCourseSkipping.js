@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         向知自动刷课脚本
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      1.0
 // @description  "向知"自动刷课脚本是为了帮助学生在新兴的网络课程学习平台"向知"上自动完成课程观看而开发的。由于该平台相对较新，尚未具备相关自动播放功能，因此我开发了这个脚本，以便学生能够轻松自动播放课程视频，从而解放他们的时间和精力。
 // @author       ShizuriYuki
 // @match        https://web.lumibayedu.com/*
@@ -12,13 +12,10 @@
 (function () {
     "use strict";
 
-    setTimeout(() => {
-        alert("向知自动刷课脚本提示您：脚本已经启动，现在您可以放心地离开电脑了！");
-    }, 100);
-
     const enableAutoMute = true;
     const enableAutoSpeedUp = true;
-    const enableLog = true;
+    const enableLog = false;
+    let enableRun = true;
 
     // 自动点击烦人的弹窗
     function autoClickAnnoyingPopup() {
@@ -107,11 +104,90 @@
         }
     }
 
+    function resetVideoStatus() {
+        const VIDEO = document.querySelector("video");
+        if (VIDEO) {
+            VIDEO.playbackRate = 1;
+            if (enableLog) console.log("[向知自动刷课脚本][INFO] Video status reset.");
+        }
+    }
+
+    // 在页面右下角显示脚本状态
+    // Create a style element
+    const style = document.createElement("style");
+    // Define the keyframes animation
+    style.textContent = `
+           @keyframes blinking {
+               0% {
+                   opacity: 1;
+               }
+               50% {
+                   opacity: 0;
+               }
+               100% {
+                   opacity: 1;
+               }
+           }
+       `;
+    // Append the style element to the document head
+    document.head.appendChild(style);
+    // Create a container div
+    const container = document.createElement("div");
+    container.style.position = "fixed";
+    container.style.bottom = "20px";
+    container.style.right = "20px";
+    container.style.backgroundColor = "white";
+    container.style.borderRadius = "8px";
+    container.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.2)";
+    container.style.padding = "10px";
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.zIndex = "999999";
+    container.style.cursor = "pointer";
+    // Create a green dot
+    const dot = document.createElement("div");
+    dot.style.width = "10px";
+    dot.style.height = "10px";
+    dot.style.backgroundColor = "green";
+    dot.style.borderRadius = "50%";
+    dot.style.marginRight = "8px";
+    // CSS 动画：Dot 每隔1秒闪烁一次
+    dot.style.animation = "blinking 1s infinite";
+    // Create text
+    const runningText = "向知自动刷课脚本正在运行，点击暂停脚本";
+    const pausedText = "向知自动刷课脚本已暂停，点击继续脚本";
+    const text = document.createElement("div");
+    text.textContent = runningText;
+    text.style.color = "black";
+    // Append the dot and text to the container
+    container.appendChild(dot);
+    container.appendChild(text);
+    // Add event listener to the container
+    container.addEventListener("click", () => {
+        if (enableRun) {
+            enableRun = false;
+            text.textContent = pausedText;
+            dot.style.backgroundColor = "red";
+            dot.style.animation = "none";
+            resetVideoStatus();
+        } else {
+            enableRun = true;
+            text.textContent = runningText;
+            dot.style.backgroundColor = "green";
+            // CSS 动画：Dot 每隔1秒闪烁一次
+            dot.style.animation = "blinking 1s infinite";
+        }
+    });
+    // Append the container to the document body
+    document.body.appendChild(container);
+
     // 每隔0.5秒检查一次视频是否播放完毕
     let intervalId = setInterval(() => {
-        if (enableAutoSpeedUp) videoSpeedUp3x();
-        if (enableAutoMute) videoAutoMute();
-        autoClickAnnoyingPopup();
-        checkIfVideoEnded();
+        if (enableRun) {
+            if (enableAutoSpeedUp) videoSpeedUp3x();
+            if (enableAutoMute) videoAutoMute();
+            autoClickAnnoyingPopup();
+            checkIfVideoEnded();
+        }
     }, 500);
 })();
