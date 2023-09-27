@@ -14,7 +14,7 @@
 
     const enableAutoMute = true;
     const enableAutoSpeedUp = true;
-    const enableLog = false;
+    const enableLog = true;
     let enableRun = 1;
 
     // 自动点击烦人的弹窗
@@ -83,17 +83,28 @@
         }
     }
 
+    function sleep(milliseconds) {
+        return new Promise((resolve) => setTimeout(resolve, milliseconds));
+    }
+
     // 检查视频是否播放完毕
     function checkIfVideoEnded() {
         const VIDEO = document.querySelector("video");
         if (VIDEO && VIDEO.ended) {
             if (enableLog) console.log("[向知自动刷课脚本][INFO] Video ended. Going to next video.");
             nextVideo();
-            // Sleep for 2 seconds to wait for the next video to load
+            // Sleep for 0.5 seconds to wait for the next video to load
             setTimeout(() => {
+                const video = document.querySelector("video");
                 if (enableLog) console.log("[向知自动刷课脚本][INFO] Video played.");
-                VIDEO.play();
-            }, 2000);
+                video.play();
+            }, 500);
+            setTimeout(() => {
+                // 将视频移动至最后1秒
+                const video = document.querySelector("video");
+                if (enableLog) console.log("[向知自动刷课脚本][INFO] Video moved to the last 1 second.");
+                video.currentTime = video.duration - 1;
+            }, 1000);
             if (enableLog) console.log("[向知自动刷课脚本][INFO] Successfully played the next video.");
         }
         // Check whether the video is paused, if so, play it.
@@ -112,7 +123,6 @@
         }
     }
 
-    
     // 在页面右下角显示脚本状态
     // Create a style element
     const style = document.createElement("style");
@@ -192,7 +202,7 @@
                 enableRun = 1;
                 const DOT = document.getElementById("scriptDot");
                 const TEXT = document.getElementById("scriptText");
-                DOT.style.backgroundColor = "green"
+                DOT.style.backgroundColor = "green";
                 DOT.style.animation = "blinking 1s infinite";
                 TEXT.textContent = runningText;
             }
