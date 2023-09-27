@@ -15,7 +15,7 @@
     const enableAutoMute = true;
     const enableAutoSpeedUp = true;
     const enableLog = false;
-    let enableRun = true;
+    let enableRun = 1;
 
     // 自动点击烦人的弹窗
     function autoClickAnnoyingPopup() {
@@ -112,27 +112,29 @@
         }
     }
 
+    
     // 在页面右下角显示脚本状态
     // Create a style element
     const style = document.createElement("style");
     // Define the keyframes animation
     style.textContent = `
-           @keyframes blinking {
-               0% {
+    @keyframes blinking {
+        0% {
                    opacity: 1;
                }
                50% {
                    opacity: 0;
-               }
+                }
                100% {
                    opacity: 1;
                }
            }
-       `;
+           `;
     // Append the style element to the document head
     document.head.appendChild(style);
     // Create a container div
     const container = document.createElement("div");
+    container.id = "scriptContainer";
     container.style.position = "fixed";
     container.style.bottom = "20px";
     container.style.right = "20px";
@@ -146,6 +148,7 @@
     container.style.cursor = "pointer";
     // Create a green dot
     const dot = document.createElement("div");
+    dot.id = "scriptDot";
     dot.style.width = "10px";
     dot.style.height = "10px";
     dot.style.backgroundColor = "green";
@@ -156,7 +159,9 @@
     // Create text
     const runningText = "向知自动刷课脚本正在运行，点击暂停脚本";
     const pausedText = "向知自动刷课脚本已暂停，点击继续脚本";
+    const notText = "请进入向知视频播放页面运行脚本";
     const text = document.createElement("div");
+    text.id = "scriptText";
     text.textContent = runningText;
     text.style.color = "black";
     // Append the dot and text to the container
@@ -164,26 +169,51 @@
     container.appendChild(text);
     // Add event listener to the container
     container.addEventListener("click", () => {
-        if (enableRun) {
-            enableRun = false;
+        if (enableRun == 1) {
+            enableRun = 0;
             text.textContent = pausedText;
             dot.style.backgroundColor = "red";
             dot.style.animation = "none";
             resetVideoStatus();
-        } else {
-            enableRun = true;
+        } else if (enableRun == 0) {
+            enableRun = 1;
             text.textContent = runningText;
             dot.style.backgroundColor = "green";
-            // CSS 动画：Dot 每隔1秒闪烁一次
             dot.style.animation = "blinking 1s infinite";
         }
     });
     // Append the container to the document body
     document.body.appendChild(container);
 
+    function checkURL() {
+        const URL = window.location.href;
+        if (URL.includes("video")) {
+            if (enableRun == 2) {
+                enableRun = 1;
+                const DOT = document.getElementById("scriptDot");
+                const TEXT = document.getElementById("scriptText");
+                DOT.style.backgroundColor = "green"
+                DOT.style.animation = "blinking 1s infinite";
+                TEXT.textContent = runningText;
+            }
+            return true;
+        } else {
+            if (enableRun != 2) {
+                enableRun = 2;
+                const DOT = document.getElementById("scriptDot");
+                const TEXT = document.getElementById("scriptText");
+                DOT.style.backgroundColor = "orange";
+                DOT.style.animation = "none";
+                TEXT.textContent = notText;
+            }
+            return false;
+        }
+    }
+
     // 每隔0.5秒检查一次视频是否播放完毕
     let intervalId = setInterval(() => {
-        if (enableRun) {
+        checkURL();
+        if (enableRun === 1) {
             if (enableAutoSpeedUp) videoSpeedUp3x();
             if (enableAutoMute) videoAutoMute();
             autoClickAnnoyingPopup();
