@@ -12,6 +12,10 @@
 (function () {
     "use strict";
 
+    setTimeout(() => {
+        alert("向知自动刷课脚本提示您：脚本已经启动，现在您可以放心地离开电脑了！");
+    }, 100);
+
     const enableAutoMute = true;
     const enableAutoSpeedUp = true;
     const enableLog = true;
