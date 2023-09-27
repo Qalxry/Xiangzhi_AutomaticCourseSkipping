@@ -2,7 +2,7 @@
 // @name         向知自动刷课脚本
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  "向知"自动刷课脚本是为了帮助学生在新兴的网络课程学习平台"向知"上自动完成课程观看而开发的。由于该平台相对较新，尚未具备相关自动播放功能，因此我开发了这个脚本，以便学生能够轻松自动播放课程视频，从而解放他们的时间和精力。
+// @description  "向知"自动刷课脚本是为了帮助学生在新兴的网络课程学习平台"向知"上自动完成课程观看而开发的。由于该平台相对较新，尚未具备相关自动播放功能，因此我开发了这个脚本，以便学生能够轻松自动播放课程视频，从而解放他们的时间和精力。(PS: 推荐使用Chrome浏览器，Firefox里3倍速有问题)
 // @author       ShizuriYuki
 // @match        https://web.lumibayedu.com/*
 // @icon         https://web.lumibayedu.com/favicon.ico
@@ -81,10 +81,6 @@
         } else {
             console.error("No currently playing video found.");
         }
-    }
-
-    function sleep(milliseconds) {
-        return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
     // 检查视频是否播放完毕
