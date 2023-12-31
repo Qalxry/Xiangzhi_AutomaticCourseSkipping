@@ -1,6 +1,6 @@
 # Xiangzhi_AutomaticCourseSkipping
 
-## 🚀向知自动刷课脚本🚀
+## 🚀向知平台自动刷课脚本🚀
 
 油猴脚本，用于自动刷课程视频，解放学生的时间和精力。
 
